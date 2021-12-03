@@ -5,6 +5,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
+	"net/http"
+	"net/http/httputil"
 )
 import "golang.org/x/net/websocket"
 
@@ -46,5 +48,19 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Static("/","public")
 	e.GET("/ws",handlewebSocket)
+	e.GET("/greet",handler)
 	e.Logger.Fatal(e.Start(":8000"))
 }
+
+func handler(c echo.Context) error {
+	dump ,err := httputil.DumpRequest(c.Request(),true)
+	if err != nil {
+		c.Logger().Error(err)
+		return echo.NewHTTPError(http.StatusInternalServerError,err)
+	}
+
+	fmt.Printf(string(dump))
+	fmt.Fprintf(c.Response(),"<html><body>hell0</body></html>\n")
+	return c.NoContent(http.StatusOK)
+}
+
