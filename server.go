@@ -1,26 +1,39 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"github.com/labstack/gommon/log"
 	"github.com/xxarupakaxx/webSocketPra/chat"
+	"github.com/xxarupakaxx/webSocketPra/helloworld"
 	"google.golang.org/grpc"
 	"net"
 )
 
+const (
+	port = ":50051"
+)
+
+type server struct{
+	helloworld.UnimplementedGreeterServer
+}
+
+func (s *server) SayHello(ctx context.Context, request *helloworld.HelloRequest) (*helloworld.HelloReply, error) {
+	panic("implement me")
+}
+
 func main() {
-	fmt.Println("Go gRPC Beginners Tutorial!")
-	lis,err := net.Listen("tcp",":9000")
+	lis, err := net.Listen("tcp", port)
 	if err != nil {
-		log.Fatalf("failed to listen :%v",err)
+		log.Fatalf("failed to listen: %v", err)
 	}
-	s:= chat.Server{}
+	chats := chat.Server{}
+	hellos := server{}
 
 
 	grpcServer := grpc.NewServer()
 
-	chat.RegisterChatServiceServer(grpcServer,&s)
-
+	chat.RegisterChatServiceServer(grpcServer,&chats)
+	helloworld.RegisterGreeterServer(grpcServer,&hellos)
 	if err = grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to server L%s",err)
 	}

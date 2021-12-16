@@ -2,9 +2,14 @@ syntax = "proto3";
 
 package chat;
 
-option go_package = "github.com/xxarupakaxx/webSocketPra/client";
+option go_package = "github.com/xxarupakaxx/webSocketPra/chat";
 message Message {
   string body = 1;
+  enum ChatType {
+    a = 0;
+    b = 1;
+    c = 2;
+  }
 }
 
 service ChatService {
