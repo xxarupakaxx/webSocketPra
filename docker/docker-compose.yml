@@ -24,13 +24,13 @@ services:
 
   client:
     build:
-      context: ./client
+      context: ./client/client
       dockerfile: Dockerfile
     command: npm run serve
     ports:
       - '8080:8080'
     volumes:
-      - ./client:/client
+      - ./client/client:/client
     depends_on:
       - 'envoy'
     container_name: 'client'
