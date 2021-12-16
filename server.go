@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"github.com/labstack/gommon/log"
-	"github.com/xxarupakaxx/webSocketPra/chat"
 	"github.com/xxarupakaxx/webSocketPra/helloworld"
+	chat2 "github.com/xxarupakaxx/webSocketPra/server/chat"
 	"google.golang.org/grpc"
 	"net"
 )
@@ -26,13 +26,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	chats := chat.Server{}
+	chats := chat2.Server{}
 	hellos := server{}
 
 
 	grpcServer := grpc.NewServer()
 
-	chat.RegisterChatServiceServer(grpcServer,&chats)
+	chat2.RegisterChatServiceServer(grpcServer,&chats)
 	helloworld.RegisterGreeterServer(grpcServer,&hellos)
 	if err = grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to server L%s",err)
