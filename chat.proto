@@ -1,17 +1,23 @@
 syntax = "proto3";
 
 package chat;
-
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 option go_package = "github.com/xxarupakaxx/webSocketPra/chat";
 message Message {
-  string body = 1;
-  enum ChatType {
-    a = 0;
-    b = 1;
-    c = 2;
-  }
+  string content = 1;
+  User user = 2;
+  google.protobuf.Timestamp created_at =3;
+}
+message User {
+  string name = 1;
+  string token = 2;
 }
 
 service ChatService {
-  rpc SayHello(Message) returns (Message) {}
+  rpc Login(User) returns (User) {}
+  rpc Logout(User) returns (google.protobuf.Empty) {}
+  rpc SendMessage(Message) returns (Message) {}
+  rpc GetMessage(User) returns (stream Message) {}
 }
+
