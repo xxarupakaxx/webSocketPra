@@ -1,4 +1,4 @@
-package client
+package chat
 
 import (
 	context "context"

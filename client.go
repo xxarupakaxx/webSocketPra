@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"github.com/labstack/gommon/log"
-	"github.com/xxarupakaxx/webSocketPra/client"
+	"github.com/xxarupakaxx/webSocketPra/chat"
 	"google.golang.org/grpc"
 )
 
@@ -16,9 +16,9 @@ func main() {
 	}
 	defer conn.Close()
 
-	c := client.NewChatServiceClient(conn)
+	c := chat.NewChatServiceClient(conn)
 
-	res,err := c.SayHello(context.Background(),&client.Message{Body: "Hello form client"})
+	res,err := c.SayHello(context.Background(),&chat.Message{Body: "Hello form client"})
 	if err != nil {
 		log.Fatalf("error when calling sayHello:%s",err)
 		return
