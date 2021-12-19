@@ -1,0 +1,6 @@
+FROM  node:lts-slim
+
+WORKDIR /client
+
+COPY ../client/client .
+RUN npm install

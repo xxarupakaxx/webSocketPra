@@ -13,19 +13,19 @@ services:
 
   server:
     build:
-      context: ./server
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: docker/Dockerfile
     command: /server/app
     ports:
       - '50051:50051'
     volumes:
-      - ./server:/go/src/server
+      - ../server:/go/src/server
     container_name: 'server'
 
   client:
     build:
-      context: ./client/client
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: docker/Dockerfile.client
     command: npm run serve
     ports:
       - '8080:8080'

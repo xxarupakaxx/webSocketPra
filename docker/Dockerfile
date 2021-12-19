@@ -1,14 +1,13 @@
 FROM golang:latest
 
 WORKDIR /server
-COPY . .
+
+COPY go.mod go.sum ./
 RUN go mod download
+
+
+COPY /server .
+COPY /server/chat .
 RUN go build -o app
 CMD ./app
 
-FROM  node:lts-slim
-
-WORKDIR /client
-
-COPY . .
-RUN npm install

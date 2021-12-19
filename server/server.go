@@ -4,7 +4,6 @@ import (
 	context "context"
 	"fmt"
 	"github.com/golang/protobuf/ptypes/empty"
-	pb "github.com/xxarupakaxx/webSocketPra/server/chat"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -25,7 +24,7 @@ type server struct {
 	streamChs sync.Map
 	exitCh    chan struct{}
 	wg        *sync.WaitGroup
-	pb.UnimplementedChatServiceServer
+	UnimplementedChatServiceServer
 }
 
 func (s *server) run(ctx context.Context) error {
@@ -42,7 +41,7 @@ func (s *server) run(ctx context.Context) error {
 		log.Println("shuttle down")
 	}()
 
-	pb.RegisterChatServiceServer(grpcServer, s)
+	RegisterChatServiceServer(grpcServer, s)
 	reflection.Register(grpcServer)
 
 	go func() {
@@ -56,7 +55,7 @@ func (s *server) run(ctx context.Context) error {
 
 	return nil
 }
-func (s *server) Login(ctx context.Context, user *pb.User) (*pb.User, error) {
+func (s *server) Login(ctx context.Context, user *User) (*User, error) {
 	log.Println("try to logged in.")
 
 	clientExists := false
@@ -68,7 +67,7 @@ func (s *server) Login(ctx context.Context, user *pb.User) (*pb.User, error) {
 		return true
 	})
 	if clientExists {
-		return &pb.User{}, fmt.Errorf("\"%s\" is already in use.", user.GetName())
+		return &User{}, fmt.Errorf("\"%s\" is already in use.", user.GetName())
 	}
 
 	user.Token = getToken()
@@ -78,7 +77,7 @@ func (s *server) Login(ctx context.Context, user *pb.User) (*pb.User, error) {
 	return user, nil
 }
 
-func (s *server) Logout(ctx context.Context, user *pb.User) (*emptypb.Empty, error) {
+func (s *server) Logout(ctx context.Context, user *User) (*emptypb.Empty, error) {
 	log.Println("Try to logged out.")
 
 	s.clients.Delete(user.GetToken())
@@ -87,14 +86,14 @@ func (s *server) Logout(ctx context.Context, user *pb.User) (*emptypb.Empty, err
 	return &empty.Empty{}, nil
 }
 
-func (s *server) SendMessage(ctx context.Context, message *pb.Message) (*pb.Message, error) {
+func (s *server) SendMessage(ctx context.Context, message *Message) (*Message, error) {
 	log.Println("try to broadcast message .")
 	s.broadcast(message)
 	log.Printf("sent %s,\n", message.GetContent())
 	return message, nil
 }
 
-func (s *server) GetMessage(user *pb.User, messageServer pb.ChatService_GetMessageServer) error {
+func (s *server) GetMessage(user *User, messageServer ChatService_GetMessageServer) error {
 	s.wg.Add(1)
 	defer s.wg.Done()
 	streamCh := s.createStreamCh(user.GetToken())
@@ -121,27 +120,27 @@ func (s *server) GetMessage(user *pb.User, messageServer pb.ChatService_GetMessa
 func (s *server) deleteStreamCh(token string) {
 	log.Println("Try to delete stream.")
 	if msg, ok := s.streamChs.Load(token); ok {
-		if value, ok := msg.(chan *pb.Message); ok {
+		if value, ok := msg.(chan *Message); ok {
 			close(value)
 		}
 		s.streamChs.Delete(token)
 	}
 }
 
-func (s *server) createStreamCh(token string) chan *pb.Message {
+func (s *server) createStreamCh(token string) chan *Message {
 	log.Println("Try to create stream.")
-	ch := make(chan *pb.Message, 1)
+	ch := make(chan *Message, 1)
 	s.streamChs.Store(token, ch)
 	return ch
 }
 
-func (s *server) broadcast(msg *pb.Message) {
+func (s *server) broadcast(msg *Message) {
 	wg := new(sync.WaitGroup)
 	s.streamChs.Range(func(_, ch interface{}) bool {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			if value, ok := ch.(chan *pb.Message); ok {
+			if value, ok := ch.(chan *Message); ok {
 				value <- msg
 			}
 		}()

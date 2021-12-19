@@ -3,6 +3,11 @@ module github.com/xxarupakaxx/webSocketPra
 go 1.17
 
 require (
+	google.golang.org/grpc v1.43.0
+	google.golang.org/protobuf v1.27.1
+)
+
+require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/labstack/echo/v4 v4.6.1 // indirect
@@ -17,6 +22,4 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect
-	google.golang.org/grpc v1.43.0 // indirect
-	google.golang.org/protobuf v1.27.1 // indirect
 )
