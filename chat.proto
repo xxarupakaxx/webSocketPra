@@ -1,23 +1,48 @@
 syntax = "proto3";
-
 package chat;
-import "google/protobuf/timestamp.proto";
-import "google/protobuf/empty.proto";
 option go_package = "github.com/xxarupakaxx/webSocketPra/chat";
-message Message {
-  string content = 1;
-  User user = 2;
-  google.protobuf.Timestamp created_at =3;
-}
-message User {
-  string name = 1;
-  string token = 2;
-}
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
 
 service ChatService {
-  rpc Login(User) returns (User) {}
-  rpc Logout(User) returns (google.protobuf.Empty) {}
-  rpc SendMessage(Message) returns (Message) {}
-  rpc GetMessage(User) returns (stream Message) {}
+  rpc SayHello(MessageRequest) returns (IdName) {
+    option (google.api.http) = {
+      get: "/hello"
+    };
+  }
 }
 
+message MessageRequest {
+  string body = 1;
+}
+
+message MessageResponse {
+  string body = 1;
+}
+
+message IdName {
+  option (grpc.gateway.protoc_gen_swagger.options.openapiv2_schema) = {
+    json_schema: {
+      description: "情報"
+          "テスト"
+      required: [
+        "id",
+        "name"
+      ]
+    }
+    example: {
+      value: "{"
+          '"id": "1",'
+          '"name": "田中 太郎"'
+          "}"
+    }
+  };
+
+  int32 id = 1 [(grpc.gateway.protoc_gen_swagger.options.openapiv2_field) = {
+    description: "primary key"
+  }];
+
+  string name = 2 [(grpc.gateway.protoc_gen_swagger.options.openapiv2_field) = {
+    description: "name"
+  }];
+}

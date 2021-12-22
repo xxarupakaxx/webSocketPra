@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package sample;
+
+option go_package = "github.com/xxarupakaxx/webSocketPra/server/pb";
+import "proto/annotations.proto";
+
+
+service UserService {
+    rpc ListUsers (ListUserRequest) returns (ListUsersResponses){
+        option (http) = {
+            get: "/api/v1/users"
+        };
+    };
+
+    rpc GetUser (GetUserRequest) returns (User) {
+        option (http) = {
+            get: "/api/v1/users/{encrypted_id}"
+        };
+    };
+
+    rpc CreateUser (CreateUserRequest) returns (User) {
+        option (http) = {
+            post: "/api/v1/users"
+            body: "*"
+        };
+    };
+
+    rpc UpdateUser (UpdateUserRequest) returns (User) {
+        option (http) = {
+            put: "/api/v1/users"
+            body:"*"
+        };
+    };
+
+    rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse) {
+        option (http) = {
+            delete: "/api/v1/users/{encrypted_id}"
+        };
+    };
+}
+message DeleteUserResponse{}
+
+message ListUserRequest{}
+
+message GetUserRequest{
+    string encrypted_id = 1;
+}
+
+message CreateUserRequest {
+    string name = 1;
+}
+
+message UpdateUserRequest {
+    string encrypted_id = 1;
+    string name = 2;
+}
+
+message DeleteUserRequest {
+    string encrypted_id = 1;
+}
+
+message User {
+    string encrypted_id = 1;
+    string name = 2;
+}
+
+message ListUsersResponses {
+    repeated User users = 1;
+}

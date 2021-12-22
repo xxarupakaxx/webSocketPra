@@ -29,5 +29,5 @@ enum PhoneType {
 
 message PhoneNumber {
   string number = 1;
-  PhoneType = 2;
+  PhoneType phone_type = 2;
 }
